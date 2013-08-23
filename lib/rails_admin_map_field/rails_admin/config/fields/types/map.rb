@@ -37,6 +37,14 @@ module RailsAdmin::Config::Fields::Types
       8
     end
 
+     register_instance_option(:map_width) do
+      "300px"
+    end
+
+    register_instance_option(:map_height) do
+      "200px"
+    end
+
     def dom_name
       @dom_name ||= "#{bindings[:form].object_name}_#{@name}_#{longitude_field}"
     end
