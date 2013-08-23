@@ -3,7 +3,6 @@
 = javascript_tag do
   :plain
     function init_map_field(){
-    jQuery(function(){
       var marker = null;
       var latlng = new google.maps.LatLng(#{form.object.send(field.name) || field.default_latitude}, #{form.object.send(field.longitude_field) || field.default_longitude});
 
@@ -12,8 +11,9 @@
         center: latlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
-
-      var map = new google.maps.Map(document.getElementById("#{field.dom_name}"), myOptions);
+      var x = document.getElementById("#{field.dom_name}");
+      console.log(x);
+      var map = new google.maps.Map(x, myOptions);
 
   - if form.object.send(field.name) && form.object.send(field.longitude_field)
     :plain
@@ -42,7 +42,7 @@
         jQuery("##{field.longitude_dom_name}").val(location.lng());
       }
 
-    })};
+    };
 %div.ramf-map-container{:id => field.dom_name, :style => "width:300px;height:200px"}
 = form.send :hidden_field, field.name, :id => field.latitude_dom_name
 = form.send :hidden_field, field.longitude_field, :id => field.longitude_dom_name
