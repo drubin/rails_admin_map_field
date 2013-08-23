@@ -11,9 +11,7 @@
         center: latlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
-      var x = document.getElementById("#{field.dom_name}");
-      console.log(x);
-      var map = new google.maps.Map(x, myOptions);
+      var map = new google.maps.Map(document.getElementById("#{field.dom_name}"), myOptions);
 
   - if form.object.send(field.name) && form.object.send(field.longitude_field)
     :plain
