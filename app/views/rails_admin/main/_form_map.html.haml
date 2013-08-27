@@ -7,11 +7,13 @@
       var latlng = new google.maps.LatLng(#{form.object.send(field.name) || field.default_latitude}, #{form.object.send(field.longitude_field) || field.default_longitude});
 
       var myOptions = {
+        disableDefaultUI: true,
         zoom: #{field.default_zoom_level},
         center: latlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       var map = new google.maps.Map(document.getElementById("#{field.dom_name}"), myOptions);
+      var geocoder = new google.maps.Geocoder();
 
   - if form.object.send(field.name) && form.object.send(field.longitude_field)
     :plain
@@ -21,6 +23,33 @@
       });
 
   :plain
+      var old_address = "";
+      jQuery("##{field.address_dom_name},##{field.city_dom_name},##{field.state_dom_name}").change("blur", function(){
+        // geocode based on this location
+        var address = $("##{field.address_dom_name}").val(),
+        city = $("##{field.city_dom_name}").val(),
+        state = $("##{field.state_dom_name}").val(),
+        address_string = "",
+        changed = false;
+
+        if (address.length === 0 || city.length === 0 || state.length === 0)
+          return;
+
+        address_string = [address, city, state].join(", ");
+        if (address_string === old_address)
+          return;
+
+        old_address = address_string;
+
+        geocoder.geocode({ 'address': address_string }, function(results, status){
+          console.log("Geocoding returned");
+          if (! results || results.length === 0 || status !== "OK") return;
+          
+          var location = results[0].geometry.location;
+          updateLocation(location)
+        });
+      });
+
       google.maps.event.addListener(map, 'click', function(e) {
         updateLocation(e.latLng);
       });
@@ -41,6 +70,6 @@
       }
 
     };
-%div.ramf-map-container{:id => field.dom_name,  :style => "width:#{field.map_width};height:#{field.map_height}"}
+%div.ramf-map-container{:id => field.dom_name,  :style => "width:#{field.map_width};height:#{field.map_height}; margin:10px"}
 = form.send :hidden_field, field.name, :id => field.latitude_dom_name
 = form.send :hidden_field, field.longitude_field, :id => field.longitude_dom_name
