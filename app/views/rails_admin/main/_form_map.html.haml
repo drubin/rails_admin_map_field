@@ -32,15 +32,20 @@
         address_string = "",
         changed = false;
 
-        if (address.length === 0 || city.length === 0 || state.length === 0)
+        if (!address)
           return;
 
-        address_string = [address, city, state].join(", ");
+        // Handle objects ONLY having an address field
+        address_string = address
+        // Objects having more detail will require more fields
+        if(address && city && state){
+          address_string = [address, city, state].join(", ");
+        }
+        
         if (address_string === old_address)
           return;
 
         old_address = address_string;
-
         geocoder.geocode({ 'address': address_string }, function(results, status){
           console.log("Geocoding returned");
           if (! results || results.length === 0 || status !== "OK") return;
